@@ -34,3 +34,13 @@ private:
     f64 fuzz;
 };
 
+class Dielectric : public Material 
+{
+public:
+    Dielectric(f64 refraction_idx) : refraction_idx(refraction_idx) {}
+    bool scatter(const Ray& r_in, const hit_record& rec, Color& attenuation, Ray& scattered) const override;
+
+private:
+    static f64 reflectance(f64 cosine, f64 refraction_index);
+    f64 refraction_idx;
+};

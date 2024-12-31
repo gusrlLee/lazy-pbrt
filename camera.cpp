@@ -11,7 +11,7 @@ void Camera::render(const Primitive &world)
 
     for (i32 j = 0; j < img_h; j++)
     {
-        std::clog << "\rScanlines remaining : " << img_h - j << " % " << std::flush;
+        std::clog << "\rScanlines remaining : " << f64(j) / f64(img_h) * 100.0 << " % " << std::flush;
         for (i32 i = 0; i < img_w; i++)
         {
             Color px_color(0, 0, 0);
@@ -81,6 +81,7 @@ Color Camera::ray_color(const Ray& r, i32 depth, const Primitive &world) const
     {
         Ray scattered;
         Color attenuation;
+
         if (rec.mat->scatter(r, rec, attenuation, scattered))
         {
             return attenuation * ray_color(scattered, depth - 1, world);
