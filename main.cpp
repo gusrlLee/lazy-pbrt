@@ -42,7 +42,8 @@ World test2_scene()
                 {
                     auto albedo = Color::random() * Color::random();
                     sphere_material = std::make_shared<Lambertian>(albedo);
-                    world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+                    auto center2 = center + Vec3(0, random_value(0, 0.5), 0);
+                    world.add(std::make_shared<Sphere>(center, center2, 0.2, sphere_material));
                 }
                 else if (choose_mat < 0.95)
                 {
@@ -83,8 +84,8 @@ int main(int argc, const char **argv) {
     // Camera setting
     Camera cam;
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.img_w = 1200;
-    cam.SPP = 1;
+    cam.img_w = 400;
+    cam.SPP = 10;
     cam.max_depth = 10;
 
     cam.vfov = 20;

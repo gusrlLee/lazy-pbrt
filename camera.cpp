@@ -8,7 +8,6 @@ void Camera::render(const Primitive &world)
     // Render
     std::cout << "P3\n"
               << img_w << ' ' << img_h << "\n255\n";
-
     for (i32 j = 0; j < img_h; j++)
     {
         std::clog << "\rScanlines remaining : " << f64(j) / f64(img_h) * 100.0 << " % " << std::flush;
@@ -86,8 +85,9 @@ Ray Camera::get_ray(i32 i, i32 j)
 
     auto ray_o = (defocus_angle <= 0) ? cam_center : defocus_disk_sample();
     auto ray_d = px_sample - ray_o;
+    auto ray_tm = random_value();
 
-    return Ray(ray_o, ray_d);
+    return Ray(ray_o, ray_d, ray_tm);
 }
 
 Color Camera::ray_color(const Ray& r, i32 depth, const Primitive &world) const

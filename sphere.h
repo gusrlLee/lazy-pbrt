@@ -11,11 +11,15 @@
 class Sphere : public Primitive
 {
 public:
-    Sphere(const Point3 &center, f64 radius, std::shared_ptr<Material> mat) : center(center), radius(std::fmax(0, radius)), mat(mat) {}
+    // Stationary Sphere 
+    Sphere(const Point3 &static_center, f64 radius, std::shared_ptr<Material> mat) : center(static_center, Vec3(0, 0, 0)), radius(std::fmax(0, radius)), mat(mat) {}
+    // Moving Sphere
+    Sphere(const Point3 &center1, const Point3 &center2, f64 radius, std::shared_ptr<Material> mat) : center(center1, center2 - center1), radius(std::fmax(0, radius)), mat(mat) {}
+
     bool hit(const Ray& r, Interval r_t, hit_record& rec) const override;
 
 private:
-    Point3 center;
+    Ray center;
     f64 radius;
     std::shared_ptr<Material> mat;
 };
