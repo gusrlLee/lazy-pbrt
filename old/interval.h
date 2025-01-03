@@ -22,6 +22,12 @@ public:
         return x;
     }
 
+    Interval expand(f64 delta) const 
+    {
+        auto padding = delta / 2;
+        return Interval(min - padding, max + padding);
+    }
+
     static const Interval empty, universe;
 };
 
