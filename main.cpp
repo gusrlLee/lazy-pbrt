@@ -20,7 +20,6 @@
 #include "shapes/sphere.h"
 
 #include "accel/bvh.h"
-#include "core/texture.h"
 
 HitTableList Test1()
 {
@@ -117,6 +116,16 @@ HitTableList Test3()
     return world;
 }
 
+HitTableList Test4()
+{
+    HitTableList world;
+    auto earthTex = MakeSptr<ImageTexture>("../assets/images/earthmap.jpg");
+    auto earthSurf = MakeSptr<Lambertian>(earthTex);
+
+    world.Add(std::make_shared<Sphere>(Point3(0, 1, 0), 1.0, earthSurf));
+    return world;
+}
+
 int main()
 {
     // setting camera
@@ -137,7 +146,8 @@ int main()
     pCam->Init();
 
     // setting scene of rendering
-    auto world = Test2();
+    auto world = Test4();
+
     world = HitTableList(MakeSptr<BVHNode>(world));
     std::shared_ptr<Scene> pScene = std::make_shared<Scene>();
     pScene->world = std::make_shared<HitTableList>(world);

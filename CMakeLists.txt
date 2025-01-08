@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
     core/ray.h
     core/scene.h
     core/types.h
+    core/image.h
 
     integrator/integrator.h
     integrator/path.h
@@ -50,7 +51,9 @@ add_executable(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 
 target_link_libraries(${PROJECT_NAME} METAL_API)
 target_link_libraries(${PROJECT_NAME} embree)
 target_link_libraries(${PROJECT_NAME} OpenMP::OpenMP_CXX)
+target_link_libraries(${PROJECT_NAME} STB_LIB)
