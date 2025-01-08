@@ -9,6 +9,6 @@ bool Lambertian::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuatio
         scatter_direction = rec.N;
 
     rOut = Ray(rec.P, scatter_direction, rIn.Time());
-    attenuation = albedo;
+    attenuation = tex->Value(rec.u, rec.v, rec.P);
     return true;
 }

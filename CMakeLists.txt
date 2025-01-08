@@ -13,23 +13,16 @@ add_executable(${PROJECT_NAME}
 
     core/camera.h
     core/camera.cpp
-    
     core/color.h
-    
-    core/hitable.h
+    core/hittable.h
     core/hitrecord.h
-    
     core/hittablelist.h
     core/hittablelist.cpp
-    
     core/interval.h
     core/interval.cpp
-    
     core/material.h
-    
     core/random.h
     core/random.cpp
-
     core/ray.h
     core/scene.h
     core/types.h
@@ -49,6 +42,11 @@ add_executable(${PROJECT_NAME}
     shapes/sphere.cpp
 
     math/vec3.h
+    math/aabb.h
+    math/aabb.cpp
+
+    accel/bvh.h
+    accel/bvh.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

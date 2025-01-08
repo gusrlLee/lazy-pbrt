@@ -9,8 +9,12 @@
 class Random 
 {
 public:
+    // FIXME: Value() -> ValueF32() 
     static F32 Value();
     static F32 Value(F32 min, F32 max);
+
+    static I32 ValueI32(I32 min, I32 max);
+
     static Vec3 Vector3();
     static Vec3 Vector3(F32 min, F32 max);
     static Vec3 UnitVector3();

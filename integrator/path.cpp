@@ -46,12 +46,12 @@ void PathTracer::Render()
             {
                 I32 i = kTileSizeX * x + u;
                 I32 j = kTileSizeY * y + v;
-                
+
                 Color pxColor(0.0f, 0.0f, 0.0f);
                 for (I32 sample = 0; sample < cam->spp; sample++)
                 {
                     Ray r = cam->GetRay(i, j);
-                    pxColor += Li(r, cam->maxDepth);
+                    pxColor += Li(r, cam->maxDepth); // FIXME: scene argument 추가
                 }
 
                 pOutput[j * w + i] = (pxColor * cam->sppInv);
@@ -83,6 +83,9 @@ void PathTracer::Render()
     std::clog << "\rDone.                                                 \n";
 }
 
+// TODO: 
+// - Ray tracing pipeline class 를 생성해서 수정하기 
+// - Recusive function format 이 아닌 iteration format으로 변경하기
 Color PathTracer::Li(const Ray &r, I32 depth) const
 {
     if (depth <= 0)

@@ -19,31 +19,33 @@
 
 #include "shapes/sphere.h"
 
+#include "accel/bvh.h"
+#include "core/texture.h"
 
 HitTableList Test1()
 {
     HitTableList world;
     auto material_ground = std::make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
     auto material_center = std::make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-    auto material_left   = std::make_shared<Dielectric>(1.50);
-    auto material_bubble   = std::make_shared<Dielectric>(1.00 / 1.50);
-    auto material_right  = std::make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
+    auto material_left = std::make_shared<Dielectric>(1.50);
+    auto material_bubble = std::make_shared<Dielectric>(1.00 / 1.50);
+    auto material_right = std::make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
 
-    world.Add(std::make_shared<Sphere>(Point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.Add(std::make_shared<Sphere>(Point3( 0.0,    0.0, -1.2),   0.5, material_center));
-    world.Add(std::make_shared<Sphere>(Point3(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.Add(std::make_shared<Sphere>(Point3(-1.0,    0.0, -1.0),   0.4, material_bubble));
-    world.Add(std::make_shared<Sphere>(Point3( 1.0,    0.0, -1.0),   0.5, material_right));
+    world.Add(std::make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0, material_ground));
+    world.Add(std::make_shared<Sphere>(Point3(0.0, 0.0, -1.2), 0.5, material_center));
+    world.Add(std::make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), 0.5, material_left));
+    world.Add(std::make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), 0.4, material_bubble));
+    world.Add(std::make_shared<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
 
     return world;
 }
 
-
 HitTableList Test2()
 {
     HitTableList world;
-    auto grountMat = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
-    world.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, grountMat));
+    auto checker = MakeSptr<CheckerTexture>(0.32, Color(.2, .3, .1), Color(0.9, 0.9, 0.9));
+    // auto grountMat = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
+    world.Add(std::make_shared<Sphere>(Point3(0, -1000, 0), 1000, MakeSptr<Lambertian>(checker)));
 
     for (I32 a = -11; a < 11; a++)
     {
@@ -92,6 +94,29 @@ HitTableList Test2()
     return world;
 }
 
+HitTableList Test3()
+{
+    // camera setting 
+    // cam.aspect_ratio = 16.0 / 9.0;
+    // cam.image_width = 400;
+    // cam.samples_per_pixel = 100;
+    // cam.max_depth = 50;
+
+    // cam.vfov = 20;
+    // cam.lookfrom = point3(13, 2, 3);
+    // cam.lookat = point3(0, 0, 0);
+    // cam.vup = vec3(0, 1, 0);
+
+    // cam.defocus_angle = 0;
+
+    HitTableList world;
+    auto checker = MakeSptr<CheckerTexture>(0.32, Color(.2, .3, .1), Color(0.9, 0.9, 0.9));
+    world.Add(std::make_shared<Sphere>(Point3(0, -10, 0), 10, MakeSptr<Lambertian>(checker)));
+    world.Add(std::make_shared<Sphere>(Point3(0,  10, 0), 10, MakeSptr<Lambertian>(checker)));
+
+    return world;
+}
+
 int main()
 {
     // setting camera
@@ -103,8 +128,8 @@ int main()
     pCam->maxDepth = 10;
 
     pCam->vFov = 20;
-    pCam->lookfrom = Point3(13,2,3);
-    pCam->lookat = Point3(0,0,0);
+    pCam->lookfrom = Point3(13, 2, 3);
+    pCam->lookat = Point3(0, 0, 0);
     pCam->vup = Vec3(0, 1, 0);
 
     pCam->defocusAngle = 0.6f;
@@ -112,8 +137,10 @@ int main()
     pCam->Init();
 
     // setting scene of rendering
+    auto world = Test2();
+    world = HitTableList(MakeSptr<BVHNode>(world));
     std::shared_ptr<Scene> pScene = std::make_shared<Scene>();
-    pScene->world = std::make_shared<HitTableList>(Test2());
+    pScene->world = std::make_shared<HitTableList>(world);
 
     // setting path tracer
     std::shared_ptr<PathTracer> pIntegrator = std::make_shared<PathTracer>();
@@ -121,6 +148,6 @@ int main()
     pIntegrator->scn = pScene;
 
     pIntegrator->Render();
-    
+
     return 0;
 }

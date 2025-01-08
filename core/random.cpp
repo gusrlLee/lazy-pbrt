@@ -14,6 +14,12 @@ F32 Random::Value(F32 min, F32 max)
     return min + (max - min) * Value();
 }
 
+I32 Random::ValueI32(I32 min, I32 max)
+{
+    return I32(Value(F32(min), F32(max+1)));
+}
+
+
 Vec3 Random::Vector3()
 {
     return Vec3(Value(), Value(), Value());

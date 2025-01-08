@@ -9,6 +9,7 @@ public:
     F32 min, max;
     Interval() : min(+inf), max(-inf) {}
     Interval(F32 min, F32 max) : min(min), max(max) {}
+    Interval(const Interval &a, const Interval &b);
 
     F32 Size() const { return max - min; }
 
