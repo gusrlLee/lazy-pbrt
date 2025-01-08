@@ -27,3 +27,19 @@ inline F32 DegreeToRadians(F32 degrees)
 {
     return degrees * pi / 180.0;
 }
+
+template <typename T>
+using Sptr = std::shared_ptr<T>;
+template <typename T, typename... Args>
+constexpr Sptr<T> MakeSptr(Args &&...args)
+{
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+template <typename T>
+using Uptr = std::shared_ptr<T>;
+template <typename T, typename... Args>
+constexpr Uptr<T> MakeUptr(Args &&...args)
+{
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}

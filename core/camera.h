@@ -11,6 +11,9 @@ public:
     void Init();
     Ray GetRay(I32 i, I32 j);
 
+    I32 GetWidth() { return imgWidth; }
+    I32 GetHeight() { return imgHeight; }
+
     F32 aspectRatio;
     I32 imgWidth;
     I32 spp;

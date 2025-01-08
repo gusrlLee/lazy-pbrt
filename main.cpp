@@ -19,6 +19,26 @@
 
 #include "shapes/sphere.h"
 
+
+HitTableList Test1()
+{
+    HitTableList world;
+    auto material_ground = std::make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
+    auto material_center = std::make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
+    auto material_left   = std::make_shared<Dielectric>(1.50);
+    auto material_bubble   = std::make_shared<Dielectric>(1.00 / 1.50);
+    auto material_right  = std::make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
+
+    world.Add(std::make_shared<Sphere>(Point3( 0.0, -100.5, -1.0), 100.0, material_ground));
+    world.Add(std::make_shared<Sphere>(Point3( 0.0,    0.0, -1.2),   0.5, material_center));
+    world.Add(std::make_shared<Sphere>(Point3(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.Add(std::make_shared<Sphere>(Point3(-1.0,    0.0, -1.0),   0.4, material_bubble));
+    world.Add(std::make_shared<Sphere>(Point3( 1.0,    0.0, -1.0),   0.5, material_right));
+
+    return world;
+}
+
+
 HitTableList Test2()
 {
     HitTableList world;
@@ -30,7 +50,7 @@ HitTableList Test2()
         for (I32 b = -11; b < 11; b++)
         {
             auto choose_mat = Random::Value();
-            Point3 center(a + 0.9 *  Random::Value(), 0.2, b + 0.9 *  Random::Value());
+            Point3 center(a + 0.9 * Random::Value(), 0.2, b + 0.9 * Random::Value());
 
             if ((center - Point3(4, 0.2, 0)).Length() > 0.9)
             {
@@ -49,9 +69,8 @@ HitTableList Test2()
                     auto fuzz = Random::Value(0, 0.5);
                     sphere_material = std::make_shared<Metal>(albedo, fuzz);
                     world.Add(std::make_shared<Sphere>(center, 0.2, sphere_material));
-
                 }
-                else 
+                else
                 {
                     // glass
                     sphere_material = std::make_shared<Dielectric>(1.5);
@@ -73,30 +92,35 @@ HitTableList Test2()
     return world;
 }
 
-
 int main()
 {
+    // setting camera
     std::shared_ptr<Camera> pCam = std::make_shared<Camera>();
+
     pCam->aspectRatio = 16.0 / 9.0;
-    pCam->imgWidth = 800;
-    pCam->spp = 100;
-    pCam->maxDepth = 50;
+    pCam->imgWidth = 720;
+    pCam->spp = 10;
+    pCam->maxDepth = 10;
 
-    pCam->lookfrom = Point3(13, 2, 3);
-    pCam->lookat = Point3(0, 0, 0);
+    pCam->vFov = 20;
+    pCam->lookfrom = Point3(13,2,3);
+    pCam->lookat = Point3(0,0,0);
     pCam->vup = Vec3(0, 1, 0);
-    pCam->defocusAngle = 0.6;
-    pCam->focusDist = 10.0f;
 
+    pCam->defocusAngle = 0.6f;
+    pCam->focusDist = 10.0f;
     pCam->Init();
 
+    // setting scene of rendering
     std::shared_ptr<Scene> pScene = std::make_shared<Scene>();
     pScene->world = std::make_shared<HitTableList>(Test2());
 
+    // setting path tracer
     std::shared_ptr<PathTracer> pIntegrator = std::make_shared<PathTracer>();
     pIntegrator->cam = pCam;
     pIntegrator->scn = pScene;
 
     pIntegrator->Render();
+    
     return 0;
 }

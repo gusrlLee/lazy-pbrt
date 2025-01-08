@@ -4,12 +4,12 @@
 void Camera::Init()
 {
     // Calculate the image height, and ensure that it's at least.
-    imgHeight = int(imgWidth / aspectRatio);
+    imgHeight = I32(imgWidth / aspectRatio);
     imgHeight = (imgHeight < 1) ? 1 : imgHeight;
 
     // Camera center point
     center = lookfrom;
-    sppInv = 1.0f / spp;
+    sppInv = 1.0f / F32(spp);
 
     // Camera settnig
     auto theta = DegreeToRadians(vFov);
@@ -28,8 +28,8 @@ void Camera::Init()
     auto vportV = vport_h * -v;
 
     // Calculate the horizontal and vertical delta vectors from pixel to pixel.
-    pxdu = vportU / float(imgWidth);
-    pxdv = vportV / float(imgHeight);
+    pxdu = vportU / F32(imgWidth);
+    pxdv = vportV / F32(imgHeight);
     
     // Calculate the location of the upper left pixel
     auto vport_upper_left = center - (focusDist * w) - vportU / 2 - vportV / 2;
