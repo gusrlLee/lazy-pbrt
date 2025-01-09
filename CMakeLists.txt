@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}
     core/scene.h
     core/types.h
     core/image.h
+    core/light.h
 
     integrator/integrator.h
     integrator/path.h
@@ -41,10 +42,16 @@ add_executable(${PROJECT_NAME}
 
     shapes/sphere.h
     shapes/sphere.cpp
+    shapes/quad.h
+    shapes/quad.cpp
 
     math/vec3.h
     math/aabb.h
     math/aabb.cpp
+    math/perlin.h
+    math/perlin.cpp
+
+    lights/diffuse.h
 
     accel/bvh.h
     accel/bvh.cpp

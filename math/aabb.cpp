@@ -6,13 +6,18 @@ const AABB AABB::universe = AABB(Interval::universe, Interval::universe, Interva
 
 AABB::AABB() {} // The default AABB is empty
 
-AABB::AABB(const Interval &x, const Interval &y, const Interval &z) : x(x), y(y), z(z) {}
+AABB::AABB(const Interval &x, const Interval &y, const Interval &z) : x(x), y(y), z(z) 
+{
+    PadToMinimums();
+}
 
 AABB::AABB(const Point3 &a, const Point3 &b)
 {
     x = (a[0] <= b[0]) ? Interval(a[0], b[0]) : Interval(b[0], a[0]);
     y = (a[1] <= b[1]) ? Interval(a[1], b[1]) : Interval(b[1], a[1]);
     z = (a[2] <= b[2]) ? Interval(a[2], b[2]) : Interval(b[2], a[2]);
+
+    PadToMinimums();
 }
 
 AABB::AABB(const AABB &box0, const AABB &box1)

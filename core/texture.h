@@ -1,4 +1,7 @@
 #pragma once
+
+#include "math/perlin.h"
+
 #include "core/image.h"
 #include "core/interval.h"
 #include "core/types.h"
@@ -70,4 +73,18 @@ public:
 
 private:
     Image img;
+};
+
+class NoiseTexture : public Texture
+{
+public:
+    NoiseTexture(F32 scale) : scale(scale) {}
+    Color Value(F32 u, F32 v, const Point3 &p) const override
+    {
+        return Color(.5, .5, .5) * (1 + std::sin(scale * p.z() + 10 * noise.Turb(p, 7)));
+    }
+
+private:
+    F32 scale;
+    Perlin noise;
 };

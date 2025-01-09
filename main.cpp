@@ -18,6 +18,9 @@
 #include "integrator/path.h"
 
 #include "shapes/sphere.h"
+#include "shapes/quad.h"
+
+#include "lights/diffuse.h"
 
 #include "accel/bvh.h"
 
@@ -104,7 +107,7 @@ HitTableList Test3()
     // cam.vfov = 20;
     // cam.lookfrom = point3(13, 2, 3);
     // cam.lookat = point3(0, 0, 0);
-    // cam.vup = vec3(0, 1, 0);
+    // cam.vup = Vec3(0, 1, 0);
 
     // cam.defocus_angle = 0;
 
@@ -126,31 +129,94 @@ HitTableList Test4()
     return world;
 }
 
+HitTableList Test5()
+{
+    HitTableList world;
+    auto perTex = MakeSptr<NoiseTexture>(4);
+    world.Add(MakeSptr<Sphere>(Point3(0,-1000,0), 1000, MakeSptr<Lambertian>(perTex))); 
+    world.Add(MakeSptr<Sphere>(Point3(0, 2, 0), 2, MakeSptr<Lambertian>(perTex))); 
+
+    return world;
+}
+
+HitTableList Test6()
+{
+    HitTableList world;
+
+    // Materials
+    auto left_red     = MakeSptr<Lambertian>(Color(1.0, 0.2, 0.2));
+    auto back_green   = MakeSptr<Lambertian>(Color(0.2, 1.0, 0.2));
+    auto right_blue   = MakeSptr<Lambertian>(Color(0.2, 0.2, 1.0));
+    auto upper_orange = MakeSptr<Lambertian>(Color(1.0, 0.5, 0.0));
+    auto lower_teal   = MakeSptr<Lambertian>(Color(0.2, 0.8, 0.8));
+
+    // Quads
+    world.Add(MakeSptr<Quad>(Point3(-3,-2, 5), Vec3(0, 0,-4), Vec3(0, 4, 0), left_red));
+    world.Add(MakeSptr<Quad>(Point3(-2,-2, 0), Vec3(4, 0, 0), Vec3(0, 4, 0), back_green));
+    world.Add(MakeSptr<Quad>(Point3( 3,-2, 1), Vec3(0, 0, 4), Vec3(0, 4, 0), right_blue));
+    world.Add(MakeSptr<Quad>(Point3(-2, 3, 1), Vec3(4, 0, 0), Vec3(0, 0, 4), upper_orange));
+    world.Add(MakeSptr<Quad>(Point3(-2,-3, 5), Vec3(4, 0, 0), Vec3(0, 0,-4), lower_teal));
+    return world;
+}
+
+HitTableList SimpleLight()
+{
+    HitTableList world;
+    auto perTex = MakeSptr<NoiseTexture>(4);
+    world.Add(MakeSptr<Sphere>(Point3(0,-1000,0), 1000, MakeSptr<Lambertian>(perTex))); 
+    world.Add(MakeSptr<Sphere>(Point3(0, 2, 0), 2, MakeSptr<Lambertian>(perTex))); 
+
+    auto diffuseLight = MakeSptr<DiffuseLight>(Color(4, 4, 4));
+    world.Add(MakeSptr<Sphere>(Point3(0, 7, 0), 2, diffuseLight)); 
+    world.Add(MakeSptr<Quad>(Point3(3, 1, -2), Vec3(2, 0, 0), Vec3(0, 2, 0), diffuseLight));
+
+    return world;
+}
+
+HitTableList CornellBox()
+{
+    HitTableList world;
+
+    auto red   = MakeSptr<Lambertian>(Color(.65, .05, .05));
+    auto white = MakeSptr<Lambertian>(Color(.73, .73, .73));
+    auto green = MakeSptr<Lambertian>(Color(.12, .45, .15));
+    auto light = MakeSptr<DiffuseLight>(Color(15, 15, 15));
+
+    world.Add(MakeSptr<Quad>(Point3(555,0,0), Vec3(0,555,0), Vec3(0,0,555), green));
+    world.Add(MakeSptr<Quad>(Point3(0,0,0), Vec3(0,555,0), Vec3(0,0,555), red));
+    world.Add(MakeSptr<Quad>(Point3(343, 554, 332), Vec3(-130,0,0), Vec3(0,0,-105), light));
+    world.Add(MakeSptr<Quad>(Point3(0,0,0), Vec3(555,0,0), Vec3(0,0,555), white));
+    world.Add(MakeSptr<Quad>(Point3(555,555,555), Vec3(-555,0,0), Vec3(0,0,-555), white));
+    world.Add(MakeSptr<Quad>(Point3(0,0,555), Vec3(555,0,0), Vec3(0,555,0), white));
+    
+    return world;
+}
+
 int main()
 {
     // setting camera
     std::shared_ptr<Camera> pCam = std::make_shared<Camera>();
 
-    pCam->aspectRatio = 16.0 / 9.0;
-    pCam->imgWidth = 720;
-    pCam->spp = 10;
-    pCam->maxDepth = 10;
+    pCam->aspectRatio = 1.0f;
+    pCam->imgWidth = 600;
+    pCam->spp = 200;
+    pCam->maxDepth = 50;
 
-    pCam->vFov = 20;
-    pCam->lookfrom = Point3(13, 2, 3);
-    pCam->lookat = Point3(0, 0, 0);
-    pCam->vup = Vec3(0, 1, 0);
+    pCam->vFov = 40;
+    pCam->lookfrom = Point3(278, 278, -800);
+    pCam->lookat = Point3(278, 278, 0);
+    pCam->vup = Vec3(0,1,0);
 
-    pCam->defocusAngle = 0.6f;
-    pCam->focusDist = 10.0f;
+    pCam->defocusAngle = 0.0f;
     pCam->Init();
 
     // setting scene of rendering
-    auto world = Test4();
+    auto world = CornellBox();
 
     world = HitTableList(MakeSptr<BVHNode>(world));
     std::shared_ptr<Scene> pScene = std::make_shared<Scene>();
     pScene->world = std::make_shared<HitTableList>(world);
+    pScene->background = Color(0, 0, 0);
 
     // setting path tracer
     std::shared_ptr<PathTracer> pIntegrator = std::make_shared<PathTracer>();

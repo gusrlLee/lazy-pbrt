@@ -89,22 +89,19 @@ void PathTracer::Render()
 Color PathTracer::Li(const Ray &r, I32 depth) const
 {
     if (depth <= 0)
-        return Color(0.0f, 0.0f, 0.0f);
+        return Color(0,0,0);
     
     HitRecord rec;
-    if (scn->world->Hit(r, Interval(0.001, inf), rec))
-    {
-        Ray scattered;
-        Color attenuation;
-        if (rec.mat->Scatter(r, rec, attenuation, scattered))
-        {
-            return attenuation * Li(scattered, depth - 1);
-        }
+    if (!scn->world->Hit(r, Interval(0.001, inf), rec))
+        return scn->background;
 
-        return Color(0, 0, 0);
-    }
+    Ray scattered;
+    Color attenuation;
+    Color colorFromEmission = rec.mat->Emit(rec.u, rec.v, rec.P);
+    
+    if (!rec.mat->Scatter(r, rec, attenuation, scattered))
+        return colorFromEmission;
 
-    Vec3 uDir = Normalize(r.Dir());
-    auto a = 0.5 * (uDir.y() + 1.0);
-    return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
+    Color colorFromScatter = attenuation * Li(scattered, depth - 1);
+    return colorFromEmission + colorFromScatter;
 }

@@ -36,4 +36,14 @@ public:
     bool Hit(const Ray &r, Interval t) const;
 
     static const AABB empty, universe;
+
+
+private:
+    void PadToMinimums()
+    {
+        F32 delta = 0.0001;
+        if (x.Size() < delta) x = x.Expand(delta);
+        if (y.Size() < delta) y = y.Expand(delta);
+        if (z.Size() < delta) z = z.Expand(delta);
+    }
 };
