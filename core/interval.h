@@ -32,3 +32,5 @@ public:
     static const Interval empty, universe;
 };
 
+Interval operator+(const Interval &ival, F32 displacement);
+Interval operator+(F32 displacement, const Interval &ival);

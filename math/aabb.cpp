@@ -59,3 +59,13 @@ bool AABB::Hit(const Ray &r, Interval t) const
     }
     return true;
 }
+
+AABB operator+(const AABB& bbox, const Vec3 &offset)
+{
+    return AABB(bbox.x + offset.x(), bbox.y + offset.y(), bbox.z + offset.z());
+}
+
+AABB operator+(const Vec3 &offset, const AABB &bbox)
+{
+    return bbox + offset; 
+}

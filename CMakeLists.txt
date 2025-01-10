@@ -39,6 +39,9 @@ add_executable(${PROJECT_NAME}
     material/metal.cpp
     material/dielectric.h
     material/dielectric.cpp
+    material/constantmedium.h
+    material/constantmedium.cpp
+    material/isotropic.h
 
     shapes/sphere.h
     shapes/sphere.cpp
