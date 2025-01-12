@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
     core/types.h
     core/image.h
     core/light.h
+    core/onb.h
 
     integrator/integrator.h
     integrator/path.h

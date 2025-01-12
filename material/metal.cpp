@@ -1,7 +1,7 @@
 #include "material/metal.h"
 
 // Metal
-bool Metal::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut) const
+bool Metal::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut, F32 &pdf) const
 {
     Vec3 reflected = Reflect(rIn.Dir(), rec.N);
     reflected = Normalize(reflected) + (fuzz * Random::UnitVector3());

@@ -24,6 +24,8 @@ public:
     static Color GenColor();
     static Color GenColor(F32 min, F32 max);
 
+    static Vec3 CosineDir();
+
 private:
     static std::uniform_real_distribution<F32> distribution;
     static std::mt19937 generator;

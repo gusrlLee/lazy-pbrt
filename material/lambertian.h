@@ -14,7 +14,9 @@ public:
     Lambertian(const Color &albedo) : tex(MakeSptr<SolidColor>(albedo)) {}
     Lambertian(Sptr<Texture> tex) : tex(tex) {}
     
-    bool Scatter(const Ray &rIn, const HitRecord &rec, Color &attenuation, Ray &rOut) const override;
+    bool Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut, F32 &pdf) const override;
+
+    F32 ScatteringPdf(const Ray &rIn, const HitRecord &rec, const Ray &rOut) const override;
 
 private:
     // Color albedo;

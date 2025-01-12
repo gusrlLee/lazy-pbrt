@@ -305,7 +305,7 @@ int main()
 
     pCam->aspectRatio = 1.0f;
     pCam->imgWidth = 600;
-    pCam->spp = 200;
+    pCam->spp = 10;
     pCam->maxDepth = 50;
 
     pCam->vFov = 40;
@@ -317,9 +317,9 @@ int main()
     pCam->Init();
 
     // setting scene of rendering
-    // auto world = CornellBox();
+    auto world = CornellBox();
     // auto world = CornellSmoke();
-    auto world = RTNWFinalWorldScene();
+    // auto world = RTNWFinalWorldScene();
 
     world = HitTableList(MakeSptr<BVHNode>(world));
     std::shared_ptr<Scene> pScene = std::make_shared<Scene>();

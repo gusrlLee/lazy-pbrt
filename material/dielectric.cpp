@@ -8,7 +8,7 @@ F32 Dielectric::Reflectance(F32 cosine, F32 refractionIdx)
     return r0 + (1 - r0) * std::pow((1 - cosine), 5);
 }
 
-bool Dielectric::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut) const 
+bool Dielectric::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut, F32 &pdf) const 
 {
     attenuation = Color(1.0, 1.0, 1.0);
     F32 ri = rec.isFrontFace ? (1.0 / refractionIdx) : refractionIdx;

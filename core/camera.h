@@ -9,7 +9,7 @@ class Camera
 {
 public:
     void Init();
-    Ray GetRay(I32 i, I32 j);
+    Ray GetRay(I32 i, I32 j, I32 si, I32 sj);
 
     I32 GetWidth() { return imgWidth; }
     I32 GetHeight() { return imgHeight; }
@@ -17,6 +17,10 @@ public:
     F32 aspectRatio;
     I32 imgWidth;
     I32 spp;
+
+    I32 sqrtSpp;
+    F32 recipSqrtSpp;
+
     I32 maxDepth;
 
     F32 vFov = 90.0f;
@@ -32,6 +36,7 @@ public:
 private:
 
     Vec3 SampleSquare() const;
+    Vec3 SampleSquareStratified(I32 si, I32 sj) const;
     Point3 DefoucsDiskSample() const;
 
     int imgHeight;

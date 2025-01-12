@@ -9,8 +9,10 @@ void Camera::Init()
 
     // Camera center point
     center = lookfrom;
-    sppInv = 1.0f / F32(spp);
-
+    sqrtSpp = I32(std::sqrt(spp));
+    sppInv = 1.0 / (sqrtSpp * sqrtSpp);
+    recipSqrtSpp = 1.0 / sqrtSpp;
+    
     // Camera settnig
     auto theta = DegreeToRadians(vFov);
     auto h = std::tan(theta / 2);
@@ -40,11 +42,13 @@ void Camera::Init()
     defocusDiskV = v * defocusRadius;
 }
 
-Ray Camera::GetRay(I32 i, I32 j)
+Ray Camera::GetRay(I32 i, I32 j, I32 si, I32 sj)
 {
     // Construct a camera ray originating from the defocus disk and directed at a randomly 
     // sampled point around the pixel location i, j.
-    auto offset = SampleSquare();
+    // auto offset = SampleSquare();
+
+    auto offset = SampleSquareStratified(si, sj);
     auto px_sample = px00 + ((i + offset.x()) * pxdu) + ((j + offset.y()) * pxdv);
 
     auto ray_o = (defocusAngle <= 0) ? center : DefoucsDiskSample();
@@ -57,6 +61,14 @@ Ray Camera::GetRay(I32 i, I32 j)
 Vec3 Camera::SampleSquare() const
 {
     return Vec3(Random::Value() - 0.5, Random::Value() - 0.5, 0);
+}
+
+Vec3 Camera::SampleSquareStratified(I32 si, I32 sj) const
+{
+    auto px = ((F32(si) + Random::Value()) * recipSqrtSpp) - 0.5; 
+    auto py = ((F32(sj) + Random::Value()) * recipSqrtSpp) - 0.5; 
+
+    return Vec3(px, py, 0);
 }
 
 Point3 Camera::DefoucsDiskSample() const

@@ -1,14 +1,21 @@
 #include "material/lambertian.h"
+#include "lambertian.h"
 
 // Lambertian
-bool Lambertian::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut) const 
+bool Lambertian::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut, F32 &pdf) const 
 {
-    auto scatter_direction = rec.N + Random::UnitVector3();
-    // Catch degenerate scatter direction 
-    if (scatter_direction.IsNearZero())
-        scatter_direction = rec.N;
+    OrthonormalBasis onb(rec.N);
 
-    rOut = Ray(rec.P, scatter_direction, rIn.Time());
+    // auto scatter_direction = rec.N + Random::();
+    auto scatterDir = onb.Transform(Random::CosineDir());
+
+    rOut = Ray(rec.P, Normalize(scatterDir), rIn.Time());
     attenuation = tex->Value(rec.u, rec.v, rec.P);
+    pdf = Dot(onb.w(), rOut.Dir()) / pi;
     return true;
+}
+
+F32 Lambertian::ScatteringPdf(const Ray &rIn, const HitRecord &rec, const Ray &rOut) const
+{
+    return 1 / (2 * pi);
 }
