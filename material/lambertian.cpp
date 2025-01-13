@@ -15,7 +15,16 @@ bool Lambertian::Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuatio
     return true;
 }
 
+bool Lambertian::Scatter(const Ray &rIn, const HitRecord &rec, ScatterRecord &srec) const
+{
+    srec.attenuation = tex->Value(rec.u, rec.v, rec.P);
+    srec.pdfPtr = MakeSptr<CosPdf>(rec.N);
+    srec.isSkipPdf = false;
+    return true;
+}
+
 F32 Lambertian::ScatteringPdf(const Ray &rIn, const HitRecord &rec, const Ray &rOut) const
 {
-    return 1 / (2 * pi);
+    auto cosTheta = Dot(rec.N, Normalize(rOut.Dir()));
+    return cosTheta < 0 ? 0 : cosTheta / pi;
 }

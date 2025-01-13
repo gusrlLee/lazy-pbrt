@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
     math/aabb.cpp
     math/perlin.h
     math/perlin.cpp
+    math/pdf.h
 
     lights/diffuse.h
 

@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "math/vec3.h"
+#include "math/pdf.h"
 
 #include "integrator/integrator.h"
 #include "core/color.h"
@@ -16,7 +17,7 @@ public:
     std::shared_ptr<Camera> cam;
     std::shared_ptr<Scene> scn;
     
-    void Render() override;
-    Color Li(const Ray &r, I32 depth) const;
+    void Render(const HitTable &world, const HitTable &lights) override;
+    Color Li(const Ray &r, I32 depth, const HitTable &world, const HitTable &lights) const;
 
 };

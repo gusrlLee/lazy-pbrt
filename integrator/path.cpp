@@ -9,7 +9,7 @@ inline F32 linear_to_gamma(F32 linear_compontent)
     return 0;
 }
 
-void PathTracer::Render()
+void PathTracer::Render(const HitTable &world, const HitTable &lights)
 {
     std::clog << "Path tracing rendering..." << std::endl;
 
@@ -60,7 +60,7 @@ void PathTracer::Render()
                     for (I32 si = 0; si < cam->sqrtSpp; si++)
                     {
                         Ray r = cam->GetRay(i, j, si, sj);
-                        pxColor += Li(r, cam->maxDepth);
+                        pxColor += Li(r, cam->maxDepth, world, lights);
                     }
                 }
 
@@ -76,6 +76,13 @@ void PathTracer::Render()
         auto r = pOutput[i].x();
         auto g = pOutput[i].y();
         auto b = pOutput[i].z();
+
+        if (r != r)
+            r = 0.0;
+        if (g != g)
+            g = 0.0;
+        if (b != b)
+            b = 0.0;
 
         r = linear_to_gamma(r);
         g = linear_to_gamma(g);
@@ -96,41 +103,37 @@ void PathTracer::Render()
 // TODO:
 // - Ray tracing pipeline class 를 생성해서 수정하기
 // - Recusive function format 이 아닌 iteration format으로 변경하기
-Color PathTracer::Li(const Ray &r, I32 depth) const
+// - world and lights 는 Scene class 로 묶기
+Color PathTracer::Li(const Ray &r, I32 depth, const HitTable &world, const HitTable &lights) const
 {
     if (depth <= 0)
         return Color(0, 0, 0);
 
     HitRecord rec;
-    if (!scn->world->Hit(r, Interval(0.001, inf), rec))
+    if (!world.Hit(r, Interval(0.001, inf), rec))
         return scn->background;
 
-    Ray scattered;
-    Color attenuation;
-    F32 pdf;
+    ScatterRecord srec;
     Color colorFromEmission = rec.mat->Emit(r, rec, rec.u, rec.v, rec.P);
 
-    if (!rec.mat->Scatter(r, rec, attenuation, scattered, pdf))
+    if (!rec.mat->Scatter(r, rec, srec))
         return colorFromEmission;
 
-    auto onLight = Point3(Random::Value(213, 343), 554, Random::Value(227, 332));
-    auto toLight = onLight - rec.P;
-    auto distSquared = toLight.LengthSqaured();
-    toLight = Normalize(toLight);
+    if (srec.isSkipPdf)
+    {
+        return srec.attenuation * Li(srec.skipPdfRay, depth - 1, world, lights);
+    }
 
-    if (Dot(toLight, rec.N) < 0)
-        return colorFromEmission;
+    auto lightPtr = MakeSptr<HitTablePdf>(lights, rec.P);
+    MixPdf p(lightPtr, srec.pdfPtr);
 
-    F32 lightArea = (343 - 213) * (332 - 227);
-    auto lCos = std::fabs(toLight.y());
-    if (lCos < 0.000001)
-        return colorFromEmission;
-
-    pdf = distSquared / (lCos * lightArea);
-    scattered = Ray(rec.P, toLight, r.Time());
+    Ray scattered = Ray(rec.P, p.Gen(), r.Time());
+    auto pdf = p.Value(scattered.Dir());
 
     F32 scatteringPdf = rec.mat->ScatteringPdf(r, rec, scattered);
 
-    Color colorFromScatter = (attenuation * scatteringPdf * Li(scattered, depth - 1)) / pdf;
+    Color sampleColor = Li(scattered, depth - 1, world, lights);
+    Color colorFromScatter = (srec.attenuation * scatteringPdf * sampleColor) / pdf;
+
     return colorFromEmission + colorFromScatter;
 }

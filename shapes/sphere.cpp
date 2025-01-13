@@ -49,6 +49,19 @@ bool Sphere::Hit(const Ray &r, Interval t, HitRecord &rec) const
     return true;
 }
 
+F32 Sphere::PdfValue(const Point3 &origin, const Vec3 &dir) const
+{
+    HitRecord rec;
+    if (!this->Hit(Ray(origin, dir), Interval(0.001, inf), rec))
+        return 0;
+    
+    auto distSq = (center.At(0) - origin).LengthSqaured();
+    auto cosThetaMax = std::sqrt(1 - radius * radius / distSq);
+    auto solidAngle = 2 * pi * (1 - cosThetaMax);
+
+    return 1 / solidAngle;
+}
+
 void Sphere::GetSphereUV(const Point3 &p, F32 &u, F32 &v)
 {
     auto theta = std::acos(-p.y());

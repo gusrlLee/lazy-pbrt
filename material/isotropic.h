@@ -19,6 +19,15 @@ public:
         return true;
     }
 
+    bool Scatter(const Ray &rIn, const HitRecord &rec, ScatterRecord &srec) const override
+    {
+        srec.attenuation = tex->Value(rec.u, rec.v, rec.P);
+        srec.pdfPtr = MakeSptr<SpherePdf>();
+        srec.isSkipPdf = false;
+        return true;
+    }
+
+
     F32 ScatteringPdf(const Ray& rIn, const HitRecord &rec, const Ray &rOut) const override
     {
         return 1 / (4 * pi);

@@ -1,4 +1,5 @@
 #include "core/hittablelist.h"
+#include "hittablelist.h"
 
 bool HitTableList::Hit(const Ray &r, Interval t, HitRecord &rec) const
 {
@@ -18,4 +19,17 @@ bool HitTableList::Hit(const Ray &r, Interval t, HitRecord &rec) const
     }
 
     return isHitAnything;
+}
+
+F32 HitTableList::PdfValue(const Point3 &origin, const Vec3 &dir) const
+{
+    auto weight = 1.0 / objects.size();
+    auto sum = 0.0;
+
+    for (const auto &object : objects)
+    {
+        sum += weight * object->PdfValue(origin, dir);
+    }
+
+    return sum;
 }

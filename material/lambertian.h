@@ -8,6 +8,8 @@
 #include "core/random.h"
 #include "core/texture.h"
 
+#include "math/pdf.h"
+
 class Lambertian : public Material
 {
 public:
@@ -15,7 +17,7 @@ public:
     Lambertian(Sptr<Texture> tex) : tex(tex) {}
     
     bool Scatter(const Ray& rIn, const HitRecord& rec, Color& attenuation, Ray& rOut, F32 &pdf) const override;
-
+    bool Scatter(const Ray &rIn, const HitRecord &rec, ScatterRecord &srec) const override;
     F32 ScatteringPdf(const Ray &rIn, const HitRecord &rec, const Ray &rOut) const override;
 
 private:

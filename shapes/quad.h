@@ -1,4 +1,5 @@
 #pragma once
+#include "core/random.h"
 
 #include "core/hittable.h"
 #include "core/hittablelist.h"
@@ -13,6 +14,8 @@ public:
         D = Dot(N, Q);
         W = n / Dot(n, n);
 
+        area = n.Length();
+
         SetBoundingBox();
     }
 
@@ -22,6 +25,13 @@ public:
     bool Hit(const Ray &r, Interval t, HitRecord &rec) const override;
     virtual bool IsInterior(F32 a, F32 b, HitRecord &rec) const;
 
+    F32 PdfValue(const Point3 &origin, const Vec3 &dir) const override;
+    Vec3 Random(const Point3 &origin) const override 
+    {
+        auto p = Q + (Random::Value() * u) + (Random::Value() * v);
+        return p - origin;
+    }    
+
 private:
     Point3 Q;
     Vec3 u, v;
@@ -30,6 +40,7 @@ private:
     AABB bbox;
     Vec3 N;
     F32 D;
+    F32 area;
 };
 
 inline Sptr<HitTableList> Box(const Point3 &a, const Point3 &b, Sptr<Material> mat)

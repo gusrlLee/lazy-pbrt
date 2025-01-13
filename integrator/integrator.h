@@ -12,7 +12,7 @@
 class Integrator 
 {
 public:
-    virtual void Render() {}
+    virtual void Render(const HitTable &world, const HitTable &lights) {}
     
     const I32 kTileSizeX = 8;
     const I32 kTileSizeY = 8;

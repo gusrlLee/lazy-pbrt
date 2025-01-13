@@ -182,6 +182,8 @@ HitTableList CornellBox()
     auto white = MakeSptr<Lambertian>(Color(.73, .73, .73));
     auto green = MakeSptr<Lambertian>(Color(.12, .45, .15));
     auto light = MakeSptr<DiffuseLight>(Color(15, 15, 15));
+    auto aluminum = MakeSptr<Metal>(Color(0.8, 0.85, 0.88), 0.0);
+    auto glass = MakeSptr<Dielectric>(1.5);
 
     world.Add(MakeSptr<Quad>(Point3(555, 0, 0), Vec3(0, 555, 0), Vec3(0, 0, 555), green));
     world.Add(MakeSptr<Quad>(Point3(0, 0, 0), Vec3(0, 555, 0), Vec3(0, 0, 555), red));
@@ -195,10 +197,12 @@ HitTableList CornellBox()
     box1 = MakeSptr<Translate>(box1, Vec3(265, 0, 295));
     world.Add(box1);
 
-    Sptr<HitTable> box2 = Box(Point3(0, 0, 0), Point3(165, 165, 165), white);
-    box2 = MakeSptr<RotateY>(box2, -18);
-    box2 = MakeSptr<Translate>(box2, Vec3(130, 0, 65));
-    world.Add(box2);
+    // Sptr<HitTable> box2 = Box(Point3(0, 0, 0), Point3(165, 165, 165), white);
+    // box2 = MakeSptr<RotateY>(box2, -18);
+    // box2 = MakeSptr<Translate>(box2, Vec3(130, 0, 65));
+    // world.Add(box2);
+
+    world.Add(MakeSptr<Sphere>(Point3(190, 90, 190), 90, glass));
 
     return world;
 }
@@ -305,7 +309,7 @@ int main()
 
     pCam->aspectRatio = 1.0f;
     pCam->imgWidth = 600;
-    pCam->spp = 10;
+    pCam->spp = 1000;
     pCam->maxDepth = 50;
 
     pCam->vFov = 40;
@@ -316,22 +320,31 @@ int main()
     pCam->defocusAngle = 0.0f;
     pCam->Init();
 
+    Sptr<Scene> pScn = MakeSptr<Scene>();
     // setting scene of rendering
-    auto world = CornellBox();
+    // auto world = CornellBox();
     // auto world = CornellSmoke();
     // auto world = RTNWFinalWorldScene();
 
+    // world = HitTableList(MakeSptr<BVHNode>(world));
+    // pScene->world = std::make_shared<HitTableList>(world);
+    pScn->background = Color(0, 0, 0);
+
+    HitTableList world = CornellBox();
     world = HitTableList(MakeSptr<BVHNode>(world));
-    std::shared_ptr<Scene> pScene = std::make_shared<Scene>();
-    pScene->world = std::make_shared<HitTableList>(world);
-    pScene->background = Color(0, 0, 0);
+
+    auto emptyMat = Sptr<Material>();
+    HitTableList lights;
+    lights.Add(MakeSptr<Quad>(Point3(343, 554, 332), Vec3(-130, 0, 0), Vec3(0, 0, -105), emptyMat));
+    lights.Add(MakeSptr<Sphere>(Point3(190, 90, 190), 90, emptyMat));
 
     // setting path tracer
     std::shared_ptr<PathTracer> pIntegrator = std::make_shared<PathTracer>();
     pIntegrator->cam = pCam;
-    pIntegrator->scn = pScene;
+    pIntegrator->scn = pScn;
 
-    pIntegrator->Render();
+    // FIXME : merge world and lights into Scene class
+    pIntegrator->Render(world, lights);
 
     return 0;
 }

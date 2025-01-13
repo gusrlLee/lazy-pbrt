@@ -26,6 +26,8 @@ public:
 
     static Vec3 CosineDir();
 
+    static Vec3 ToSphere(F32 r, F32 distSq);
+
 private:
     static std::uniform_real_distribution<F32> distribution;
     static std::mt19937 generator;

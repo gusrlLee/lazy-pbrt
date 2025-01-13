@@ -45,3 +45,15 @@ bool Quad::IsInterior(F32 a, F32 b, HitRecord &rec) const
     rec.v = b;
     return true;
 }
+
+F32 Quad::PdfValue(const Point3 &origin, const Vec3 &dir) const
+{
+    HitRecord rec;
+    if (!this->Hit(Ray(origin, dir), Interval(0.001, inf), rec))
+        return 0;
+    
+    auto distSquared = rec.t * rec.t * dir.LengthSqaured();
+    auto cosine = std::fabs(Dot(dir, rec.N) / dir.Length());
+
+    return distSquared / (cosine * area);
+}

@@ -2,7 +2,7 @@
 #include "random.h"
 
 std::uniform_real_distribution<F32> Random::distribution = std::uniform_real_distribution<F32>(0.0, 1.0f);
-std::mt19937 Random::generator; 
+std::mt19937 Random::generator;
 
 F32 Random::Value()
 {
@@ -16,9 +16,8 @@ F32 Random::Value(F32 min, F32 max)
 
 I32 Random::ValueI32(I32 min, I32 max)
 {
-    return I32(Value(F32(min), F32(max+1)));
+    return I32(Value(F32(min), F32(max + 1)));
 }
-
 
 Vec3 Random::Vector3()
 {
@@ -75,10 +74,23 @@ Vec3 Random::CosineDir()
     auto r1 = Value();
     auto r2 = Value();
 
-    auto phi = 2*pi*r1;
+    auto phi = 2 * pi * r1;
     auto x = std::cos(phi) * std::sqrt(r2);
     auto y = std::sin(phi) * std::sqrt(r2);
-    auto z = std::sqrt(1-r2);
+    auto z = std::sqrt(1 - r2);
+
+    return Vec3(x, y, z);
+}
+
+Vec3 Random::ToSphere(F32 r, F32 distSq)
+{
+    auto r1 = Value();
+    auto r2 = Value();
+    auto z = 1 + r2 * (std::sqrt(1 - r * r / distSq) - 1);
+
+    auto phi = 2 * pi * r1;
+    auto x = std::cos(phi) * std::sqrt(1 - z * z);
+    auto y = std::sin(phi) * std::sqrt(1 - z * z);
 
     return Vec3(x, y, z);
 }
