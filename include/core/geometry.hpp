@@ -182,8 +182,6 @@ namespace gi
         return rOutPerp + rOutParallel;
     }
 
-
-
     // Ray
     class Ray
     {

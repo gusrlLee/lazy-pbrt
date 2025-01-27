@@ -93,7 +93,7 @@ namespace gi
 
         Ray center;
         Float radius;
-        std::shared_ptr<Material> mat;
+        SPtr<Material> mat;
         AABB bbox;
     };
 

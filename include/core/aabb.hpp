@@ -29,6 +29,24 @@ namespace gi
             PadToMinimums();
         }
 
+        AABB(const Point3 &a, const Point3 &b, const Point3 &c)
+        {
+            Float xMin = std::min(a[0], b[0], c[0]);
+            Float xMax = std::max(a[0], b[0], c[0]);
+
+            Float yMin = std::min(a[1], b[1], c[1]);
+            Float yMax = std::max(a[1], b[1], c[1]);
+
+            Float zMin = std::min(a[2], b[2], c[2]);
+            Float zMax = std::max(a[2], b[2], c[2]);
+
+            x = Interval(xMin, xMax);
+            y = Interval(yMin, yMax);
+            z = Interval(zMin, zMax);
+
+            PadToMinimums();
+        }
+
         AABB(const AABB &box0, const AABB &box1)
         {
             x = Interval(box0.x, box1.x);

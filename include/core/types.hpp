@@ -17,6 +17,7 @@ namespace gi
 
     const Float INF = std::numeric_limits<Float>::infinity();
     const Float PI = 3.1415926535897932385;
+    const Float EPS = std::numeric_limits<Float>::epsilon();
 
     template <typename T>
     using SPtr = std::shared_ptr<T>;
