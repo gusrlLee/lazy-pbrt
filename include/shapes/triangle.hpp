@@ -53,12 +53,12 @@ namespace gi
             Vec3 s = r.Orig() - this->v0();
             Float u = f * Dot(s, h);
             if (u < 0 || u > 1)
-                return;
+                return false;
 
             Vec3 q = Cross(s, e1);
             Float v = f * Dot(r.Dir(), q);
             if (v < 0 || u + v > 1)
-                return;
+                return false;
 
             // success to intersection test of triangle
             Float tValue = f * Dot(e2, q);

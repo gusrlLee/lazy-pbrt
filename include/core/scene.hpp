@@ -4,8 +4,10 @@
 #include "core/geometry.hpp"
 #include "core/hittablelist.hpp"
 #include "accel/bvh.hpp"
+
 #include "shapes/quad.hpp"
 #include "shapes/sphere.hpp"
+#include "shapes/triangle.hpp"
 
 #include "tiny_obj_loader.h"
 
@@ -16,6 +18,9 @@ namespace gi
     public:
         Scene() {}
         ~Scene() {}
+
+        std::vector<Vertex> vertices;
+        std::vector<Hittable> primitives;
 
         HittableList world;
         HittableList lights;
@@ -59,13 +64,15 @@ namespace gi
 
         void LoadObj(CString *path)
         {
-            std::string inputfile = "cornell_box.obj";
+            auto white = MakeShared<Lambertian>(Color(.73, .73, .73));
+            auto light = MakeShared<DiffuseLight>(Color(15, 15, 15));
+
             tinyobj::ObjReaderConfig reader_config;
-            reader_config.mtl_search_path = "./"; // Path to material files
+            reader_config.mtl_search_path = "../assets/models"; // Path to material files
 
             tinyobj::ObjReader reader;
 
-            if (!reader.ParseFromFile(inputfile, reader_config))
+            if (!reader.ParseFromFile(path, reader_config))
             {
                 if (!reader.Error().empty())
                 {
@@ -116,17 +123,34 @@ namespace gi
                             tinyobj::real_t ty = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
                         }
 
+
+                        vertices.push_back(Vertex(vx, vy, vz));
+
                         // Optional: vertex colors
                         // tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
                         // tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
                         // tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
                     }
+
                     index_offset += fv;
 
                     // per-face material
                     shapes[s].mesh.material_ids[f];
                 }
+            } // for 
+            std::cout << "vertices size - " << vertices.size() << std::endl;
+            for (Int idx = 0; idx < vertices.size() / 3; idx++)
+            {
+                world.Add(MakeShared<Triangle>(vertices[3 * idx + 0], vertices[3 * idx + 1], vertices[3 * idx + 2], white));
             }
+            std::cout << "World triangle size = " << world.Size() << std::endl;
+            world.Add(MakeShared<Quad>(Point3(0, 10, 0), Vec3(-10, 0, 0), Vec3(0, 0, -10), light));
+
+            // setting background color
+            background = Color(0.0f);
+
+            // setting bvh tree
+            world = HittableList(MakeShared<BVHNode>(world));
         }
     };
 

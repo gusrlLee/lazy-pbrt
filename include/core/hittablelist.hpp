@@ -21,6 +21,8 @@ namespace gi
             bbox = AABB(bbox, object->BBox());
         }
 
+        Int Size() { return objects.size(); }
+
         Bool Hit(const Ray &r, Interval t, HitRecord &rec) const override
         {
             HitRecord tempRec;
