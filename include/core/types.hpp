@@ -9,7 +9,13 @@ namespace gi
     typedef int Int;
     typedef unsigned int UInt;
     typedef unsigned int Index;
+
+#if 0
     typedef double Float;
+#else
+    typedef float Float;
+#endif
+
     typedef std::string String;
     typedef const char CString;
     typedef size_t Size;

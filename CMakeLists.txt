@@ -4,6 +4,7 @@ project(gi)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenMP REQUIRED)
+find_package(embree REQUIRED)
 
 add_subdirectory(ext)
 
@@ -14,5 +15,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/ext)
 
 
 target_link_libraries(${PROJECT_NAME} tinyobjloader)
+target_link_libraries(${PROJECT_NAME} embree)
 target_link_libraries(${PROJECT_NAME} OpenMP::OpenMP_CXX)
 

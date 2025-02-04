@@ -5,254 +5,172 @@
 
 namespace gi
 {
-    inline Float DegreeToRadians(Float degrees)
+    template <typename T>
+    struct Vec2
     {
-        return degrees * PI / 180.0;
-    }
-
-    // Vector
-    class Vec2
-    {
-    public:
-        Float e[2];
-
-        Vec2() : e{0, 0} {}
-        Vec2(Float v) : e{v, v} {}
-        Vec2(Float e0, Float e1) : e{e0, e1} {}
-
-        Float x() const { return e[0]; }
-        Float y() const { return e[1]; }
-
-        Vec2 operator-() const { return Vec2(-e[0], -e[1]); }
-        Float operator[](int i) const { return e[i]; }
-        Float &operator[](int i) { return e[i]; }
-
-        Vec2 &operator+=(const Vec2 &v)
-        {
-            e[0] += v.e[0];
-            e[1] += v.e[1];
-            return *this;
-        }
-
-        Vec2 &operator*=(Float t)
-        {
-            e[0] *= t;
-            e[1] *= t;
-            return *this;
-        }
-
-        Vec2 &operator/=(Float t)
-        {
-            return *this *= 1 / t;
-        }
-
-        Float Length() const
-        {
-            return std::sqrt(LengthSquared());
-        }
-
-        Float LengthSquared() const
-        {
-            return e[0] * e[0] + e[1] * e[1];
-        }
+        T x, y;
     };
 
-    class Vec3
+    using Vec2i = Vec2<Int>;
+    using Vec2f = Vec2<Float>;
+    using Point2i = Vec2<Int>;
+    using Point2f = Vec2<Float>;
+
+    template <typename T>
+    inline Vec2<T> Add(const Vec2<T> &u, const Vec2<T> &v)
     {
-    public:
-        Float e[3];
+        Vec2<T> res = {u.x + v.x, u.y + v.y};
+        return res;
+    }
 
-        Vec3() : e{0, 0, 0} {}
-        Vec3(Float v) : e{v, v, v} {}
-        Vec3(Float e0, Float e1, Float e2) : e{e0, e1, e2} {}
+    template <typename T>
+    inline Vec2<T> Sub(const Vec2<T> &u, const Vec2<T> &v)
+    {
+        Vec2<T> res = {u.x - v.x, u.y - v.y};
+        return res;
+    }
 
-        Float x() const { return e[0]; }
-        Float y() const { return e[1]; }
-        Float z() const { return e[2]; }
+    template <typename T>
+    inline Vec2<T> Mul(const Vec2<T> &u, const Vec2<T> &v)
+    {
+        Vec2<T> res = {u.x * v.x, u.y * v.y};
+        return res;
+    }
 
-        Vec3 operator-() const { return Vec3(-e[0], -e[1], -e[2]); }
-        Float operator[](int i) const { return e[i]; }
-        Float &operator[](int i) { return e[i]; }
+    template <typename T>
+    inline Vec2<T> Mul(const Vec2<T> &u, const T &v)
+    {
+        Vec2<T> res = {u.x * v, u.y * v};
+        return res;
+    }
 
-        Vec3 &operator+=(const Vec3 &v)
-        {
-            e[0] += v.e[0];
-            e[1] += v.e[1];
-            e[2] += v.e[2];
-            return *this;
-        }
+    template <typename T>
+    inline Vec2<T> Div(const Vec2<T> &u, const Vec2<T> &v)
+    {
+        Vec2<T> res = {u.x / v.x, u.y / v.y};
+        return res;
+    }
 
-        Vec3 &operator*=(Float t)
-        {
-            e[0] *= t;
-            e[1] *= t;
-            e[2] *= t;
-            return *this;
-        }
+    template <typename T>
+    inline Vec2<T> Div(const Vec2<T> &u, const T &v)
+    {
+        Vec2<T> res = {u.x / v, u.y / v};
+        return res;
+    }
 
-        Vec3 &operator/=(Float t)
-        {
-            return *this *= 1 / t;
-        }
-
-        Float Length() const
-        {
-            return std::sqrt(LengthSquared());
-        }
-
-        Float LengthSquared() const
-        {
-            return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
-        }
-
-        Bool IsNearZero() const
-        {
-            // Return true if the vector is close to zero in all dimensions.
-            auto s = 1e-8;
-            return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
-        }
+    template <typename T>
+    struct Vec3
+    {
+        T x, y, z;
     };
 
-    // point3 is just an alias for Vec3, but useful for geometric clarity in the code.
-    using Poitn2 = Vec2;
-    using Point3 = Vec3;
-    using Vertex = Vec3;
+    using Vec3i = Vec3<Int>;
+    using Vec3f = Vec3<Float>;
+    using Vertex = Vec3<Float>;
+    using Point3i = Vec3<Int>;
+    using Point3f = Vec3<Float>;
+    using Normal = Vec3<Float>;
 
-    using Normal = Vec3;
-    using Color = Vec3;
-
-    // Vector Utility Functions
-    inline Vec3 operator+(const Vec3 &u, const Vec3 &v)
+    template <typename T>
+    inline Vec3<T> Add(const Vec3<T> &u, const Vec3<T> &v)
     {
-        return Vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+        Vec3<T> res = {u.x + v.x, u.y + v.y, u.z + v.z};
+        return res;
     }
 
-    inline Vec3 operator-(const Vec3 &u, const Vec3 &v)
+    template <typename T>
+    inline Vec3<T> Sub(const Vec3<T> &u, const Vec3<T> &v)
     {
-        return Vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+        Vec3<T> res = {u.x - v.x, u.y - v.y, u.z - v.z};
+        return res;
     }
 
-    inline Vec3 operator*(const Vec3 &u, const Vec3 &v)
+    template <typename T>
+    inline Vec3<T> Mul(const Vec3<T> &u, const Vec3<T> &v)
     {
-        return Vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+        Vec3<T> res = {u.x * v.x, u.y * v.y, u.z * v.z};
+        return res;
     }
 
-    inline Vec3 operator*(Float t, const Vec3 &v)
+    template <typename T>
+    inline Vec3<T> Mul(const Vec3<T> &u, const T &v)
     {
-        return Vec3(t * v.e[0], t * v.e[1], t * v.e[2]);
+        Vec3<T> res = {u.x * v, u.y * v, u.z * v};
+        return res;
     }
 
-    inline Vec3 operator*(const Vec3 &v, Float t)
+    template <typename T>
+    inline Vec3<T> Div(const Vec3<T> &u, const Vec3<T> &v)
     {
-        return t * v;
+        Vec3<T> res = {u.x / v.x, u.y / v.y, u.z / v.z};
+        return res;
     }
 
-    inline Vec3 operator/(const Vec3 &v, Float t)
+    template <typename T>
+    inline Vec3<T> Div(const Vec3<T> &u, const T &v)
     {
-        return (1 / t) * v;
+        Vec3<T> res = {u.x / v, u.y / v, u.z / v};
+        return res;
     }
 
-    inline Float Dot(const Vec3 &u, const Vec3 &v)
+    template <typename T>
+    inline Float Dot(const Vec3<T> &u, const Vec3<T> &v)
     {
-        return u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
+        return u.x * v.x + u.y * v.y + u.z * v.z;
     }
 
-    inline Vec3 Cross(const Vec3 &u, const Vec3 &v)
+    template <typename T>
+    inline Vec3<T> Cross(const Vec3<T> &u, const Vec3<T> &v)
     {
-        return Vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-                    u.e[2] * v.e[0] - u.e[0] * v.e[2],
-                    u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+        Vec3<T> res = {
+            u.y * v.z - u.z * v.y,
+            u.z * v.x - u.x * v.z,
+            u.x * v.y - u.y * v.x
+        };
+        return res;
     }
 
-    inline Vec3 Normalize(const Vec3 &v)
+    template <typename T> 
+    inline Float Len(const Vec3<T> &v)
     {
-        return v / v.Length();
+        return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
     }
 
-    inline Vec3 Reflect(const Vec3 &v, const Vec3 &n)
+    template <typename T> 
+    inline Float LenSq(const Vec3<T> &v)
     {
-        return v - 2 * Dot(v, n) * n;
+        return v.x * v.x + v.y * v.y + v.z * v.z;
     }
 
-    inline Vec3 Refract(const Vec3 &uv, const Vec3 &n, Float etaiOverEtat)
+    template <typename T> 
+    inline Vec3<T> Normalize(const Vec3<T> &v)
     {
-        auto cosTheta = std::fmin(Dot(-uv, n), 1.0);
-        Vec3 rOutPerp = etaiOverEtat * (uv + cosTheta * n);
-        Vec3 rOutParallel = -std::sqrt(std::fabs(1.0 - rOutPerp.LengthSquared())) * n;
-        return rOutPerp + rOutParallel;
+        return Div(v, Len(v));
     }
 
-    // Ray
-    class Ray
+    template <typename T> 
+    inline Vec3<T> Reverse(const Vec3<T> &v)
     {
-    public:
-        Ray() {}
-
-        Ray(const Point3 &origin, const Vec3 &direction, Float time) : o(origin), d(direction), tm(time) {}
-        Ray(const Point3 &origin, const Vec3 &direction) : Ray(origin, direction, 0) {}
-
-        const Point3 &Orig() const { return o; }
-        const Vec3 &Dir() const { return d; }
-        Float Time() const { return tm; }
-
-        Point3 At(Float t) const
-        {
-            return o + t * d;
-        }
-
-    private:
-        Point3 o;
-        Vec3 d;
-        Float tm;
-    };
-
-    class Interval
-    {
-    public:
-        Float min, max;
-        Interval() : min(+INF), max(-INF) {}
-        Interval(Float min, Float max) : min(min), max(max) {}
-        Interval(const Interval &a, const Interval &b)
-        {
-            // Create the interval tightly enclosing the two input intervals.
-            min = a.min <= b.min ? a.min : b.min;
-            max = a.max >= b.max ? a.max : b.max;
-        }
-
-        Float Size() const { return max - min; }
-
-        bool Contains(Float x) const { return min <= x && x <= max; }
-        bool Surrounds(Float x) const { return min < x && x < max; }
-
-        Float Clamp(Float x) const
-        {
-            if (x < min)
-                return min;
-            if (x > max)
-                return max;
-            return x;
-        }
-
-        Interval Expand(Float delta) const
-        {
-            auto padding = delta / 2;
-            return Interval(min - padding, max + padding);
-        }
-
-        static const Interval empty, universe;
-    };
-
-    const Interval Interval::empty = Interval(+INF, -INF);
-    const Interval Interval::universe = Interval(-INF, +INF);
-
-    Interval operator+(const Interval &ival, Float displacement)
-    {
-        return Interval(ival.min + displacement, ival.max + displacement);
+        Vec3<T> res = {-v.x, -v.y, -v.z};
+        return res;
     }
-    Interval operator+(Float displacement, const Interval &ival)
+
+    typedef struct Color
     {
-        return ival + displacement;
-    }
+        Float r, g, b;
+    } Color;
+
+    typedef struct Ray
+    {
+        Point3f o;
+        Vec3f d;
+    } Ray;
+
+    typedef struct Triangle
+    {
+        Vertex v0, v1, v2;
+        UInt matIdx;
+    } Triangle;
 }
 
 #endif
