@@ -160,6 +160,71 @@ namespace gi
         Float r, g, b;
     } Color;
 
+    typedef struct UColor
+    {
+        Int r, g, b;
+    } UColor;
+
+    inline Color Add(const Color &u, const Color &v)
+    {
+        Color res = {u.r + v.r, u.g + v.g, u.b + v.b};
+        return res;
+    }
+
+    inline Color Sub(const Color &u, const Color &v)
+    {
+        Color res = {u.r - v.r, u.g - v.g, u.b - v.b};
+        return res;
+    }
+
+    inline Color Mul(const Color &u, const Color &v)
+    {
+        Color res = {u.r * v.r, u.g * v.g, u.b * v.b};
+        return res;
+    }
+
+    inline Color Mul(const Color &u, const Float &v)
+    {
+        Color res = {u.r * v, u.g * v, u.b * v};
+        return res;
+    }
+
+    inline Color Div(const Color &u, const Color &v)
+    {
+        Color res = {u.r / v.r, u.g / v.g, u.b / v.b};
+        return res;
+    }
+
+    inline Color Div(const Color &u, const Float &v)
+    {
+        Color res = {u.r / v, u.g / v, u.b / v};
+        return res;
+    }
+    
+    inline UColor ToInt(const Color &c)
+    {
+        UColor res = {Int(255.999 * c.r), Int(255.999 * c.g), Int(255.999 * c.b)};
+        return res;
+    }
+
+    template <typename T> 
+    inline Color ConvertToColor(const Vec3<T> &v)
+    {
+        Color res = {v.x, v.y, v.z};
+        return res;
+    }
+
+    class Material;
+    typedef struct RayPayload {
+        Point3f p;
+        Float t;
+        UInt primIdx;
+        UInt matIdx;
+        UInt geomIdx;
+        Normal n;
+        SPtr<Material> mat;
+    } RayPayload;
+
     typedef struct Ray
     {
         Point3f o;
@@ -169,7 +234,10 @@ namespace gi
     typedef struct Triangle
     {
         Vertex v0, v1, v2;
+        Vec3f e1, e2;
+        Normal n;
         UInt matIdx;
+        SPtr<Material> mat;
     } Triangle;
 }
 

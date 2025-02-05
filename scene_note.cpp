@@ -274,3 +274,35 @@
 
 //     return world;
 // }
+
+for (int k = 0; k < maxDepth; ++k)
+{
+    IntersectInfo info;
+    if (scene.intersect(ray, info))
+    {
+        // Le
+        if (info.hitPrimitive->hasAreaLight())
+        {
+            radiance += throughput *
+                        info.hitPrimitive->Le(info.surfaceInfo, -ray.direction);
+        }
+
+        // sample direction by BxDF
+        Vec3f dir;
+        float pdf_dir;
+        Vec3f f = info.hitPrimitive->sampleBxDF(
+            -ray.direction, info.surfaceInfo, TransportDirection::FROM_CAMERA,
+            sampler, dir, pdf_dir);
+
+        // update throughput and ray
+        throughput *= f *
+                      cosTerm(-ray.direction, dir, info.surfaceInfo,
+                              TransportDirection::FROM_CAMERA) /
+                      pdf_dir;
+        ray = Ray(info.surfaceInfo.position, dir);
+    }
+    else
+    {
+        break;
+    }
+}
